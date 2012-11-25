@@ -5,5 +5,9 @@ module Session
       Session::Command::Insert
     end
 
+    def delete_command
+      Session::Command::Delete
+    end
+
   end
 end

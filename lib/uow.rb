@@ -19,6 +19,10 @@ class Uow
     Command::Insert
   end
 
+  def delete_command
+    Command::Insert
+  end
+
   def register_insert(object, mapper)
     command = insert_command.new(object, mapper)
     register(command, dependency_resolver(command))
@@ -32,7 +36,7 @@ class Uow
   end
 
   def register_delete(object, mapper)
-    command = Command::Delete.new(object, mapper)
+    command = delete_command.new(object, mapper)
     register(command, dependency_resolver(command))
     self
   end

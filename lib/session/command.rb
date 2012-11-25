@@ -15,6 +15,18 @@ module Session
       end
     end
 
+    def child_objects
+      mapper.child_relationships.map do |relationship|
+        object.public_send(relationship.name)
+      end
+    end
+
+    def parent_relationships
+      mapper.parent_relationships.map do |relationship|
+        object.public_send(relationship.name)
+      end
+    end
+
     def child_relationships
       mapper.child_relationships.map do |relationship|
         object.public_send(relationship.name)

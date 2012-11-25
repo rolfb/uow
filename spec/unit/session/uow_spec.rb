@@ -21,14 +21,15 @@ describe Session::Uow do
   let(:child)              { mock('child') }
   let(:child_mapper)       { mock('child_mapper', :parent_relationships => parent_relationships, :child_relationships => []) }
 
-
   describe "#flush" do
-    it "executes inserts in correct order" do
+    before do
       grandparent.stub!(:child).and_return(parent)
       parent.stub!(:parent).and_return(grandparent)
       parent.stub!(:child).and_return(child)
       child.stub!(:parent).and_return(parent)
+    end
 
+    it "executes inserts in correct order" do
       uow.register_insert(child, child_mapper)
       uow.register_insert(parent, parent_mapper)
       uow.register_insert(grandparent, grandparent_mapper)
@@ -36,6 +37,18 @@ describe Session::Uow do
       grandparent_mapper.should_receive(:insert).with(grandparent).ordered
       parent_mapper.should_receive(:insert).with(parent).ordered
       child_mapper.should_receive(:insert).with(child).ordered
+
+      uow.flush
+    end
+
+    it "executes deletes in correct order" do
+      uow.register_delete(child, child_mapper)
+      uow.register_delete(parent, parent_mapper)
+      uow.register_delete(grandparent, grandparent_mapper)
+
+      child_mapper.should_receive(:delete).with(child).ordered
+      parent_mapper.should_receive(:delete).with(parent).ordered
+      grandparent_mapper.should_receive(:delete).with(grandparent).ordered
 
       uow.flush
     end
