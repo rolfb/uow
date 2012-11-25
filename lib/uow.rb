@@ -3,6 +3,7 @@ require "uow/command/insert"
 require "uow/command/update"
 require "uow/command/delete"
 require "uow/dependency_resolver"
+require "session"
 
 class Uow
   include TSort
@@ -14,8 +15,12 @@ class Uow
     initialize_index
   end
 
+  def insert_command
+    Command::Insert
+  end
+
   def register_insert(object, mapper)
-    command = Command::Insert.new(object, mapper)
+    command = insert_command.new(object, mapper)
     register(command, dependency_resolver(command))
     self
   end
