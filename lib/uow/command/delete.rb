@@ -6,10 +6,6 @@ class Uow
         @mapper.delete(@object)
       end
 
-      def depends_on?(other)
-        false
-      end
-
     end
   end
 end

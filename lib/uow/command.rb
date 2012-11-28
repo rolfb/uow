@@ -12,7 +12,7 @@ class Uow
     end
 
     def depends_on?(other)
-      raise NotImplementedError, "#{self.class}#depends_on? must be implemented"
+      false
     end
   end
 end
