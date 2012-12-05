@@ -42,6 +42,10 @@ describe Session::Uow do
       uow.register_insert(parent, parent_mapper)
       uow.register_insert(grandparent, grandparent_mapper)
 
+      grandparent_mapper.should_receive(:prepare_for_insert).with(grandparent).ordered
+      parent_mapper.should_receive(:prepare_for_insert).with(parent).ordered
+      child_mapper.should_receive(:prepare_for_insert).with(child).ordered
+
       grandparent_mapper.should_receive(:insert).with(grandparent).ordered
       parent_mapper.should_receive(:insert).with(parent).ordered
       child_mapper.should_receive(:insert).with(child).ordered
@@ -56,6 +60,10 @@ describe Session::Uow do
       uow.register_delete(child, child_mapper)
       uow.register_delete(parent, parent_mapper)
       uow.register_delete(grandparent, grandparent_mapper)
+
+      child_mapper.should_receive(:prepare_for_delete).with(child).ordered
+      parent_mapper.should_receive(:prepare_for_delete).with(parent).ordered
+      grandparent_mapper.should_receive(:prepare_for_delete).with(grandparent).ordered
 
       child_mapper.should_receive(:delete).with(child).ordered
       parent_mapper.should_receive(:delete).with(parent).ordered

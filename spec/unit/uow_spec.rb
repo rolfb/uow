@@ -18,6 +18,10 @@ describe Uow do
       uow.register_update(object_2, mapper_2)
       uow.register_delete(object_3, mapper_3)
 
+      mapper_3.should_receive(:prepare_for_delete).with(object_3).ordered
+      mapper_2.should_receive(:prepare_for_update).with(object_2).ordered
+      mapper_1.should_receive(:prepare_for_insert).with(object_1).ordered
+
       mapper_3.should_receive(:delete).with(object_3).ordered
       mapper_2.should_receive(:update).with(object_2).ordered
       mapper_1.should_receive(:insert).with(object_1).ordered

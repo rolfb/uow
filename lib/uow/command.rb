@@ -7,6 +7,10 @@ class Uow
       @object, @mapper = object, mapper
     end
 
+    def prepare
+      raise NotImplementedError, "#{self.class}#prepare must be implemented"
+    end
+
     def execute
       raise NotImplementedError, "#{self.class}#execute must be implemented"
     end

@@ -55,7 +55,7 @@ class Uow
   end
 
   def flush
-    tsort.each { |command| command.execute }
+    tsort.each { |command| command.prepare.execute }
     initialize_index
   end
 
