@@ -9,7 +9,11 @@ class Uow
     end
 
     def each(commands, &block)
-      commands.select { |other| command.depends_on?(other) }.each(&block)
+      dependencies(commands).each(&block)
+    end
+
+    def dependencies(commands)
+      commands.select { |other| command.depends_on?(other) }
     end
   end
 end
