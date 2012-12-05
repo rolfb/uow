@@ -10,7 +10,11 @@ class Uow
 
   attr_reader :index
 
-  def initialize(dependency_resolver = DependencyResolver)
+  def self.dependency_resolver
+    DependencyResolver
+  end
+
+  def initialize(dependency_resolver = self.class.dependency_resolver)
     @dependency_resolver = dependency_resolver
     initialize_index
   end
@@ -55,6 +59,10 @@ class Uow
     initialize_index
   end
 
+  def dependency_resolver(command)
+    @dependency_resolver.new(command)
+  end
+
   private
 
   def initialize_index
@@ -63,10 +71,6 @@ class Uow
 
   def commands
     @index.keys
-  end
-
-  def dependency_resolver(command)
-    @dependency_resolver.new(command)
   end
 
   def tsort_each_node(&block)

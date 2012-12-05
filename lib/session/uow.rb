@@ -1,6 +1,10 @@
 module Session
   class Uow < ::Uow
 
+    def self.dependency_resolver
+      Session::DependencyResolver
+    end
+
     def insert_command
       Session::Command::Insert
     end
