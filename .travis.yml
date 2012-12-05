@@ -15,9 +15,7 @@ rvm:
 matrix:
   allow_failures:
     - rvm: ruby-head
-    - rvm: rbx-18mode
     - rvm: jruby-head
-    - rvm: 2.0.0
 notifications:
   email:
     - piotr.solnica@gmail.com
