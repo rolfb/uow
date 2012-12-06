@@ -1,3 +1,7 @@
+require 'abstract_type'
+require 'descendants_tracker'
+require 'adamantium'
+
 require "uow/command"
 require "uow/command/insert"
 require "uow/command/update"

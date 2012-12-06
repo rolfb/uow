@@ -1,5 +1,7 @@
 class Uow
   class Command
+    include Adamantium::Flat
+
     attr_reader :object
     attr_reader :mapper
 

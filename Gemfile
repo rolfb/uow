@@ -5,6 +5,7 @@ gemspec
 
 gem 'descendants_tracker'
 gem 'abstract_type'
+gem 'adamantium'
 
 group :development do
   gem 'rspec', '1.3.2'
