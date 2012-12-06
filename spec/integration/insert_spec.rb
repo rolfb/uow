@@ -1,12 +1,12 @@
-require 'spec_helper'
+require 'spec_helper_integration'
 
 describe "Executing insert commands" do
   before(:all) do
-    City    = Class.new(OpenStruct)
-    Address = Class.new(OpenStruct)
-    User    = Class.new(OpenStruct)
+    City    = Class.new(Model)
+    Address = Class.new(Model)
+    User    = Class.new(Model)
 
-    UserAddressRelationship = Class.new {
+    class UserAddressRelationship < Relationship
       def get(address)
         address.user
       end
@@ -16,9 +16,9 @@ describe "Executing insert commands" do
         user.address    = address
         address.user_key = user.key
       end
-    }
+    end
 
-    AddressCityRelationship = Class.new {
+    class AddressCityRelationship < Relationship
       def get(address)
         address.city
       end
@@ -28,54 +28,25 @@ describe "Executing insert commands" do
         city.addresses   << address
         address.city_key = city.key
       end
-    }
+    end
 
-    AddressMapper = Class.new {
+    class AddressMapper < Mapper
       def prepare_for_insert(object)
         parent_relationships.each do |relationship|
           relationship.set(object)
         end
       end
 
-      def insert(object)
-        object.key = 2
-        2
-      end
-
       def parent_relationships
         [ UserAddressRelationship.new, AddressCityRelationship.new ]
       end
-    }
+    end
 
-    CityMapper = Class.new {
-      def prepare_for_insert(object)
-        # noop
-      end
+    class CityMapper < Mapper
+    end
 
-      def insert(object)
-        object.key = 3
-        3
-      end
-
-      def parent_relationships
-        []
-      end
-    }
-
-    UserMapper = Class.new {
-      def prepare_for_insert(object)
-        # noop
-      end
-
-      def insert(object)
-        object.key = 1
-        1
-      end
-
-      def parent_relationships
-        []
-      end
-    }
+    class UserMapper < Mapper
+    end
   end
 
   let(:address) {
@@ -102,17 +73,6 @@ describe "Executing insert commands" do
     UserMapper.new
   }
 
-  after(:all) do
-    Object.send(:remove_const, :User)
-    Object.send(:remove_const, :Address)
-    Object.send(:remove_const, :City)
-    Object.send(:remove_const, :UserMapper)
-    Object.send(:remove_const, :AddressMapper)
-    Object.send(:remove_const, :CityMapper)
-    Object.send(:remove_const, :UserAddressRelationship)
-    Object.send(:remove_const, :AddressCityRelationship)
-  end
-
   context "when all required commands are registered" do
     it "prepares objects and executes commands in correct order" do
       uow = Session::Uow.new
@@ -126,11 +86,11 @@ describe "Executing insert commands" do
 
       uow.flush
 
-      user.key.should be(1)
-      address.key.should be(2)
+      user.key.should eql('User_1')
+      address.key.should eql('Address_1')
       user.address.should be(address)
       address.user.should be(user)
-      address.user_key.should be(1)
+      address.user_key.should eql('User_1')
     end
   end
 
@@ -146,14 +106,14 @@ describe "Executing insert commands" do
 
       uow.flush
 
-      user.key.should be(1)
-      city.key.should be(3)
-      address.key.should be(2)
+      user.key.should eql('User_1')
+      city.key.should be('City_1')
+      address.key.should be('Address_1')
       user.address.should be(address)
       address.city.should be(city)
       address.city_key.should be(city.key)
       address.user.should be(user)
-      address.user_key.should be(1)
+      address.user_key.should be('User_1')
       city.addresses.should include(address)
     end
   end
