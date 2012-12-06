@@ -12,8 +12,8 @@ describe "Executing insert commands" do
       end
 
       def set(address)
-        user            = get(address)
-        user.address    = address
+        user             = get(address)
+        user.address     = address
         address.user_key = user.key
       end
     end
