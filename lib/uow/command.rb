@@ -1,6 +1,6 @@
 class Uow
   class Command
-    include Adamantium::Flat
+    include AbstractType, Adamantium::Flat
 
     attr_reader :object
     attr_reader :mapper
@@ -9,13 +9,9 @@ class Uow
       @object, @mapper = object, mapper
     end
 
-    def prepare
-      raise NotImplementedError, "#{self.class}#prepare must be implemented"
-    end
+    abstract_method :prepare
 
-    def execute
-      raise NotImplementedError, "#{self.class}#execute must be implemented"
-    end
+    abstract_method :execute
 
     def depends_on?(other)
       false
