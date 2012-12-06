@@ -61,6 +61,18 @@ describe "Executing insert commands" do
     User.new(:key => nil, :name => "John", :address => nil)
   }
 
+  let(:user_persisted) {
+    user = User.new(:key => nil, :name => "Jane", :address => nil)
+    user_mapper.insert(user)
+    user
+  }
+
+  let(:city_persisted) {
+    city = City.new(:key => nil, :name => "Foo", :updated_at => nil)
+    city_mapper.insert(city)
+    city
+  }
+
   let(:address_mapper) {
     AddressMapper.new
   }
@@ -80,41 +92,25 @@ describe "Executing insert commands" do
       address.city = city
       address.user = user
 
+      city_persisted.name = "Bar"
+
       uow.register_insert(address, address_mapper)
       uow.register_insert(user,    user_mapper)
       uow.register_insert(city,    city_mapper)
 
+      uow.register_delete(user_persisted, user_mapper)
+      uow.register_update(city_persisted, city_mapper)
+
       uow.flush
 
-      user.key.should eql('User_1')
+      user.key.should eql('User_2')
       address.key.should eql('Address_1')
       user.address.should be(address)
       address.user.should be(user)
-      address.user_key.should eql('User_1')
-    end
-  end
+      address.user_key.should eql('User_2')
 
-  context "when a required command is missing" do
-    it "adds missing command, prepares objects and executes commands in correct order" do
-      pending
-
-      uow = Session::Uow.new
-
-      address.user = user
-
-      uow.register_insert(address, address_mapper)
-
-      uow.flush
-
-      user.key.should eql('User_1')
-      city.key.should be('City_1')
-      address.key.should be('Address_1')
-      user.address.should be(address)
-      address.city.should be(city)
-      address.city_key.should be(city.key)
-      address.user.should be(user)
-      address.user_key.should be('User_1')
-      city.addresses.should include(address)
+      city_persisted.updated_at.should be_instance_of(DateTime)
+      user_persisted.deleted_at.should be_instance_of(DateTime)
     end
   end
 end

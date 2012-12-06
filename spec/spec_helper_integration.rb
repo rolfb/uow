@@ -10,8 +10,24 @@ class Mapper
   def prepare_for_insert(object)
   end
 
+  def prepare_for_update(object)
+    object.updated_at = DateTime.now
+  end
+
+  def prepare_for_delete(object)
+    object.deleted_at = DateTime.now
+  end
+
   def insert(object)
     object.key = "#{object.class.name}_#{(@index += 1)}"
+  end
+
+  def delete(object)
+    object
+  end
+
+  def update(object)
+    object
   end
 
   def parent_relationships
